@@ -6,9 +6,13 @@ on:
 jobs:
   initialize_repo:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
@@ -29,12 +33,12 @@ jobs:
           REPO_NAME="${{ github.repository }}"
           USERNAME=$(echo $REPO_NAME | cut -d'/' -f1)
           REPO_NAME_ONLY=$(echo $REPO_NAME | cut -d'/' -f2)
-          echo "::set-output name=username::$USERNAME"
-          echo "::set-output name=reponame::$REPO_NAME_ONLY"
+          echo "username=$USERNAME" >> $GITHUB_OUTPUT
+          echo "reponame=$REPO_NAME_ONLY" >> $GITHUB_OUTPUT
 
       - name: Set branch name
         id: vars
-        run: echo "::set-output name=branch::initialize-repo-$(date +%Y%m%d%H%M%S)"
+        run: echo "branch=initialize-repo-$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
 
       - name: Replace {reponame} and {username} with actual values
         run: |
@@ -54,7 +58,7 @@ jobs:
           BRANCH_NAME="${{ steps.vars.outputs.branch }}"
           git checkout -b $BRANCH_NAME
           git add .
-          git commit -m "Initialize repository with repo name $REPO_NAME_ONLY and username $USERNAME"
+          git commit -m "Initialize repository with repo name ${{ steps.extract.outputs.reponame }} and username ${{ steps.extract.outputs.username }}"
           git push origin HEAD:$BRANCH_NAME
 
       - name: Create pull request
