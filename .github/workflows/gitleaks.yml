@@ -2,14 +2,28 @@ name: Gitleaks
 on: [pull_request, workflow_dispatch]
 jobs:
   scan:
-    name: gitleaks
+    name: Gitleaks Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
       - name: Run Gitleaks
+        id: gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      
+      - name: Create issue if leaks found
+        if: steps.gitleaks.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "Gitleaks found potential secrets in PR #${{ github.event.pull_request.number || 'Manual Run' }}" \
+            --body "Gitleaks has detected one or more potential secrets or credentials. Please review the workflow logs for details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --label "security,automated issue"
