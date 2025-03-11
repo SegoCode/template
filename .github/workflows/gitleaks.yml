@@ -55,5 +55,5 @@ jobs:
           
           gh issue create \
             --repo ${{ github.repository }} \
-            --title "🔐 Security Alert: Potential secrets detected in ${{ github.event_name == 'pull_request' && format('PR #{0}', github.event.pull_request.number) || 'main branch' }}" \
+            --title "Security Alert: Potential secrets detected in ${{ github.event_name == 'pull_request' && format('PR #{0}', github.event.pull_request.number) || 'main branch' }}" \
             --body "${ISSUE_BODY}"
