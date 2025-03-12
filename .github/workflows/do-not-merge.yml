@@ -5,7 +5,7 @@ on:
     types: [opened, edited, labeled, unlabeled, synchronize, ready_for_review]
 
 jobs:
-  check_wip:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - name: Check if PR is ready to be merged
