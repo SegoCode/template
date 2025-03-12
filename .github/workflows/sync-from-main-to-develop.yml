@@ -9,13 +9,13 @@ jobs:
   sync_main_into_develop:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Explicit permission to push to repository
+      contents: write 
     steps:
       - name: Checkout develop branch
-        uses: actions/checkout@v4  # Updated from v3 to v4
+        uses: actions/checkout@v4  
         with:
           ref: develop
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
