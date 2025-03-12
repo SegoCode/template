@@ -36,7 +36,7 @@ jobs:
             
             if (headBranch === 'develop' && baseBranch === 'main') {
               const repoFullName = context.payload.repository.full_name;
-              const syncWorkflowLink = `https://github.com/${repoFullName}/blob/main/.github/workflows/sync-from-develop-to-main.yml`;
+              const syncWorkflowLink = `https://github.com/${repoFullName}/actions/workflows/sync-from-develop-to-main.yml`;
               
               const message = `
               ## ⚠️ Direct PR from develop to main detected
