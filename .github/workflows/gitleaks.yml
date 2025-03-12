@@ -1,9 +1,17 @@
 name: Gitleaks
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # Run at 00:00 UTC on the first day of each month
+    - cron: '0 0 1 * *'
+
 jobs:
   scan:
     name: Gitleaks Scan
     runs-on: ubuntu-latest
+    # Only run scheduled jobs on main branch
+    if: github.event_name != 'schedule' || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +40,7 @@ jobs:
 
           **Detection Time:** ${TIMESTAMP}
           **Branch:** ${GITHUB_REF#refs/heads/}
-          **Triggered by:** ${{ github.event_name == 'workflow_dispatch' && 'Manual workflow run' || 'Automated scan' }}
+          **Triggered by:** ${{ github.event_name == 'workflow_dispatch' && 'Manual workflow run' || (github.event_name == 'schedule' && 'Monthly scheduled scan' || 'Automated scan') }}
           **Detected by:** Gitleaks Security Scanner
           
           ### Details
