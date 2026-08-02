@@ -1,31 +1,40 @@
 ## Initialization
 
-**Note**: This step is only forn setting up a new repository.
+**Note**: This step is only for setting up a new repository.
 
-Before starting to work with the repository, an initialization step is required to replace placeholders with actual repository information.
-
-### Running the Initializer Workflow
-
-We have an initializer GitHub Action that replaces placeholders in the repository files with the actual repository name and username.
+Before starting to work with the repository, configure its settings and run the initializer workflow once.
 
 To initialize the repository:
 
-1. **Trigger the Initializer Workflow**:
+1. **Configure pull requests** under **Settings → General**:
+
+   - Enable squash merging.
+   - Disable merge commits and rebase merging.
+   - Disable the wiki if it is not needed.
+
+2. **Configure workflow permissions** under **Settings → Actions → General**:
+
+   - Select **Read and write permissions**.
+   - Enable **Allow GitHub Actions to create and approve pull requests**.
+
+3. **Trigger the initializer workflow**:
 
    - Go to the **Actions** tab in the GitHub repository.
    - Select the **Initialize repository** workflow.
    - Click on **Run workflow** to manually trigger it.
 
-2. **Workflow Actions**:
+4. **Review the generated changes**:
 
-   - The workflow replaces all instances of `reponame` and `username` with `{}` in all files with the actual repository name and username.
+   - The workflow replaces all instances of `{reponame}` and `{username}` in all files with the actual repository name and username.
    - It removes the initializer workflow file (`initializer.yml`).
-   - It commits these changes to a new branch and opens a PR to `main`.
-
-3. **Merge the Initialization PR**:
-
+   - It creates `develop` if needed.
+   - It commits these changes to `chore/initialize-repository` using a Conventional Commit and opens a PR to `main`.
+   - Running it again reuses the same branch and pull request.
    - Review the PR created by the initializer workflow.
    - Once satisfied, merge the PR into `main`.
+
+> [!IMPORTANT]
+> A workflow cannot grant itself write access or administrative repository permissions. Complete steps 1 and 2 before running the initializer.
 
 ## Branching Strategy
 
@@ -104,16 +113,19 @@ Once approved, your PR will be merged into the `develop` branch.
 
 #### Manual Trigger of Sync Workflow
 
-When changes in `develop` are ready to be promoted to `main`, manually trigger the **Sync from develop to main** workflow:
+When changes in `develop` are ready to be promoted to `main`, manually trigger the **Sync from develop to main** workflow and choose a release type:
 
 1. Go to the **Actions** tab in the GitHub repository.
 2. Select the **Sync from develop to main** workflow.
-3. Click on **Run workflow** to manually trigger it.
+3. Select `minor`, `major`, or `none`, then click **Run workflow**.
 
 #### Automatic PR Creation
 
-- The workflow creates a PR to merge `develop` into `main`.
-- The PR includes labels `auto-sync` and `auto-tag`.
+- The workflow creates a PR to merge `develop` into `main`, or reuses an existing open PR for those branches.
+- It always adds `auto-sync`.
+- `minor` adds `auto-tag`; `major` adds both `auto-tag` and `semver:major`; `none` removes both release labels.
+- A manually opened `develop` to `main` PR is therefore supported: run the workflow afterward to apply the desired release policy.
+- The `Warn direct PR` workflow comments once on manually opened promotion PRs that do not have `auto-sync`.
 
 ```
 [develop] --(Workflow)--> PR to [main]
@@ -140,7 +152,8 @@ When a PR is merged into `main` and has the `auto-tag` label, the **Generate tag
 
 1. **Tag Creation**:
 
-   - The workflow determines the new version number by incrementing the minor version of the latest tag.
+   - The workflow determines the new version number from the latest `major.minor` tag.
+   - It increments the major version and resets minor to zero when `semver:major` is present; otherwise it increments minor.
    - If no tags exist, it starts with `1.0`.
    - It creates a new tag on the `main` branch.
 
@@ -156,7 +169,7 @@ When a PR is merged into `main` and has the `auto-tag` label, the **Generate tag
 #### Tag Versioning
 
 - We use a simplified versioning scheme: `major.minor`.
-- The major version remains constant unless manually changed.
+- The major version increments when the promotion uses the `major` release type.
 - The minor version increments with each tagged release.
 
 ### Creating a Release
@@ -187,3 +200,19 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) stand
 
 - **`auto-sync`**: Indicates the PR is syncing `develop` to `main`.
 - **`auto-tag`**: Triggers automatic tag creation upon merging.
+- **`semver:major`**: Increments the major version instead of the minor version.
+
+## GitHub Actions Conventions
+
+All workflows that commit, tag, push, or manage pull requests follow the same standard:
+
+- **Actions**: use the current Node 24 generations: `actions/checkout@v7`, `actions/github-script@v9`, `actions/first-interaction@v3`, and `gitleaks/gitleaks-action@v3`.
+- **Checkout**: uses `fetch-depth: 0` only when history or tags are needed. Workflows that only call the GitHub API skip checkout entirely.
+- **Identity**: commits and tags are authored as `github-actions[bot]`, configured locally in the repository:
+  ```shell
+  git config user.name "github-actions[bot]"
+  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  ```
+- **Permissions**: every job declares an explicit `permissions:` block with the minimum scopes required (`contents: write` to push or tag, `pull-requests: write` for PRs, `issues: write` for issues and labels).
+- **Git operations** (commit, tag, merge, push) use plain `git`, authenticated by the `GITHUB_TOKEN` credentials that `actions/checkout` persists by default.
+- **API operations** (PRs, issues, labels) use the `gh` CLI — preinstalled on GitHub runners, never install it manually — authenticated with the `GITHUB_TOKEN` environment variable and `--repo ${{ github.repository }}` when running without a checkout.

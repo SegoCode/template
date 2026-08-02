@@ -10,6 +10,12 @@
 </p>
 
 ## About
+[![Top language](https://img.shields.io/github/languages/top/{username}/{reponame}?style=flat-square)](https://github.com/{username}/{reponame})
+[![Repository size](https://img.shields.io/github/repo-size/{username}/{reponame}?style=flat-square&label=repo%20size)](https://github.com/{username}/{reponame})
+[![Commit activity per year](https://img.shields.io/github/commit-activity/y/{username}/{reponame}?style=flat-square&label=commits)](https://github.com/{username}/{reponame}/graphs/commit-activity)
+[![Commits since tagged version](https://img.shields.io/github/commits-since/{username}/{reponame}/latest?style=flat-square&label=commits%20since%20tag)](https://github.com/{username}/{reponame}/releases)
+[![GitHub downloads](https://img.shields.io/github/downloads/{username}/{reponame}/total?style=flat-square&label=downloads)](https://github.com/{username}/{reponame}/releases)
+[![Bitcoin BTC](https://img.shields.io/badge/Bitcoin-BTC-F7931A?style=flat-square&logo=bitcoin&logoColor=white)](https://bitcoin.org/)
 
 This section should provide a concise introduction to the application, explaining its primary function and the problem it addresses. 
 
