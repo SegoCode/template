@@ -32,7 +32,7 @@ jobs:
           gh label create auto-tag --repo "${{ github.repository }}" --color BFDADC --force
           gh label create semver:major --repo "${{ github.repository }}" --color B60205 --force
 
-      - name: Create pull request
+      - name: Replace pull request
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -41,14 +41,16 @@ jobs:
           > If this pull request is merged with the **auto-tag** label, it will create a **new tag**.
           > To prevent this, manually remove the **auto-tag** label."
 
-          PR_NUMBER=$(gh pr list --repo "${{ github.repository }}" --base main --head develop --state open --json number --jq '.[0].number')
-          if [ -z "$PR_NUMBER" ]; then
-            PR_NUMBER=$(gh pr create --repo "${{ github.repository }}" --base main --head develop \
-              --title "chore: promote develop to main" \
-              --body "$PR_BODY" | sed 's#.*/##')
-          fi
+          gh pr list --repo "${{ github.repository }}" --base main --head develop --state open \
+            --json number --jq '.[].number' | while read -r PR_NUMBER; do
+              gh pr close "$PR_NUMBER" --repo "${{ github.repository }}"
+            done
 
-          gh pr edit "$PR_NUMBER" --repo "${{ github.repository }}" --body "$PR_BODY" --add-label auto-sync
+          PR_NUMBER=$(gh pr create --repo "${{ github.repository }}" --base main --head develop \
+            --title "chore: promote develop to main" \
+            --body "$PR_BODY" | sed 's#.*/##')
+
+          gh pr edit "$PR_NUMBER" --repo "${{ github.repository }}" --add-label auto-sync
           case "${{ inputs.release }}" in
             major)
               gh pr edit "$PR_NUMBER" --repo "${{ github.repository }}" --add-label auto-tag --add-label semver:major
