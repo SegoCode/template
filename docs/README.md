@@ -122,10 +122,10 @@ When changes in `develop` are ready to be promoted to `main`, manually trigger t
 
 #### Automatic PR Creation
 
-- The workflow creates a PR to merge `develop` into `main`, or reuses an existing open PR for those branches.
+- The workflow closes every open `develop` to `main` PR, regardless of its author or labels, and creates a new promotion PR.
 - It always adds `auto-sync`.
 - `minor` adds `auto-tag`; `major` adds both `auto-tag` and `semver:major`; `none` removes both release labels.
-- A manually opened `develop` to `main` PR is therefore supported: run the workflow afterward to apply the desired release policy.
+- Running the workflow after opening a manual `develop` to `main` PR closes the manual PR and replaces it with the automated promotion PR.
 - The `Warn direct PR` workflow comments once on manually opened promotion PRs that do not have `auto-sync`.
 
 ```
