@@ -39,10 +39,11 @@ jobs:
 
       - name: Replace {reponame} and {username} with actual values in non-workflow files
         run: |
+          set -o pipefail
           REPO_NAME_ONLY="${{ steps.extract.outputs.reponame }}"
           USERNAME="${{ steps.extract.outputs.username }}"
-          { git grep -IlZ '{reponame}' -- ':!.github/workflows/*' || true; } | xargs -0r sed -i "s/{reponame}/$REPO_NAME_ONLY/g"
-          { git grep -IlZ '{username}' -- ':!.github/workflows/*' || true; } | xargs -0r sed -i "s/{username}/$USERNAME/g"
+          git grep -Ilz '{reponame}' -- ':!.github/workflows/*' | xargs -0r sed -i "s/{reponame}/$REPO_NAME_ONLY/g"
+          git grep -Ilz '{username}' -- ':!.github/workflows/*' | xargs -0r sed -i "s/{username}/$USERNAME/g"
 
       - name: Remove initializer workflow
         run: |
