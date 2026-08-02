@@ -35,6 +35,7 @@ To initialize the repository:
 
 > [!IMPORTANT]
 > A workflow cannot grant itself write access or administrative repository permissions. Complete steps 1 and 2 before running the initializer.
+> If pull request creation is denied, the initializer opens an issue with these instructions and can be run again after the permissions are fixed.
 
 ## Branching Strategy
 
