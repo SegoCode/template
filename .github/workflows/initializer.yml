@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
       pull-requests: write
 
     steps:
@@ -65,8 +66,37 @@ jobs:
           PR_URL=$(gh pr list --repo "${{ github.repository }}" --base main --head chore/initialize-repository \
             --state open --json url --jq '.[0].url')
           if [ -z "$PR_URL" ]; then
-            PR_URL=$(gh pr create --repo "${{ github.repository }}" --base main --head chore/initialize-repository \
+            if ! PR_URL=$(gh pr create --repo "${{ github.repository }}" --base main --head chore/initialize-repository \
               --title "chore: initialize repository" \
-              --body "Replace template placeholders, create the develop branch, and remove the one-time initializer.")
+              --body "Replace template placeholders, create the develop branch, and remove the one-time initializer." 2>&1); then
+              if [[ "$PR_URL" != *"not permitted to create or approve pull requests"* ]]; then
+                echo "$PR_URL" >&2
+                exit 1
+              fi
+
+              ISSUE_TITLE="Action required: allow workflows to create pull requests"
+              ISSUE_BODY=$(printf '%s\n' \
+                "The repository initializer could not create its pull request because GitHub Actions does not have permission." \
+                "" \
+                "To fix it:" \
+                "" \
+                "1. Open [Settings > Actions > General](https://github.com/${{ github.repository }}/settings/actions)." \
+                "2. Under **Workflow permissions**, select **Read and write permissions**." \
+                "3. Enable **Allow GitHub Actions to create and approve pull requests**." \
+                "4. Save the changes." \
+                "5. Run the [Initialize repository workflow](https://github.com/${{ github.repository }}/actions/workflows/initializer.yml) again." \
+                "" \
+                "The initialization branch already exists and will be reused.")
+
+              EXISTING_ISSUE=$(gh issue list --repo "${{ github.repository }}" --state open --limit 100 \
+                --json title,url --jq '.[] | select(.title == "Action required: allow workflows to create pull requests") | .url')
+              if [ -n "$EXISTING_ISSUE" ]; then
+                echo "Permission issue already exists: $EXISTING_ISSUE"
+              else
+                gh issue create --repo "${{ github.repository }}" --title "$ISSUE_TITLE" --body "$ISSUE_BODY"
+              fi
+              echo "$PR_URL" >&2
+              exit 1
+            fi
           fi
           echo "$PR_URL"
