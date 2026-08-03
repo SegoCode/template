@@ -42,17 +42,15 @@ jobs:
             const workflowUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/workflows/sync-from-develop-to-main.yml`;
             const body = [
               marker,
-              '## Manual promotion PR',
-              '',
-              'This pull request was opened manually from `develop` to `main` without the `auto-sync` label.',
-              '',
-              `Use the [Sync from develop to main workflow](${workflowUrl}) to create or reuse the promotion PR and select the release type:`,
-              '',
-              '- `minor`: create the next minor tag.',
-              '- `major`: create the next major tag.',
-              '- `none`: merge without creating a tag.',
-              '',
-              'If this pull request is intentional, run the workflow so it can apply the correct labels and release policy.'
+              '> [!WARNING]',
+              '> This pull request was opened manually from `develop` to `main` without the `auto-sync` label.',
+              '>',
+              `> The [Sync from develop to main workflow](${workflowUrl}) will close this PR and create a new promotion PR.`,
+              '> Select the release type:',
+              '>',
+              '> - `minor`: create the next minor tag.',
+              '> - `major`: create the next major tag.',
+              '> - `none`: merge without creating a tag.'
             ].join('\n');
 
             await github.rest.issues.createComment({
