@@ -84,9 +84,7 @@ jobs:
                 "2. Under **Workflow permissions**, select **Read and write permissions**." \
                 "3. Enable **Allow GitHub Actions to create and approve pull requests**." \
                 "4. Save the changes." \
-                "5. Run the [Initialize repository workflow](https://github.com/${{ github.repository }}/actions/workflows/initializer.yml) again." \
-                "" \
-                "The initialization branch already exists and will be reused.")
+                "5. Run the [Initialize repository workflow](https://github.com/${{ github.repository }}/actions/workflows/initializer.yml) again.")
 
               EXISTING_ISSUE=$(gh issue list --repo "${{ github.repository }}" --state open --limit 100 \
                 --json title,url --jq '.[] | select(.title == "Action required: allow workflows to create pull requests") | .url')
