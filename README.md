@@ -15,12 +15,12 @@
 [![Commit activity per year](https://img.shields.io/github/commit-activity/y/{username}/{reponame}?style=flat-square&label=commits)](https://github.com/{username}/{reponame}/graphs/commit-activity)
 [![GitHub downloads](https://img.shields.io/github/downloads/{username}/{reponame}/total?style=flat-square&label=downloads)](https://github.com/{username}/{reponame}/releases)
 [![Licencia: PolyForm Noncommercial + GNU AGPL-3.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%20%2B%20GNU%20AGPL--3.0-blue?style=flat-square)](https://github.com/{username}/{reponame}/blob/main/LICENSE)
-[![Bitcoin BTC](https://img.shields.io/badge/buy_me_a_coffee-BTC-F7931A?style=flat-square&logo=bitcoin&logoColor=white)](https://github.com/SegoCode/SegoCode/discussions/2)
-[![AI: Mostly Human](https://img.shields.io/badge/AI-Mostly%20Human-60a5fa?style=flat-square)](https://github.com/{username}/{reponame})
-[![AI: Lightly Assisted](https://img.shields.io/badge/AI-Lightly%20Assisted-3b82f6?style=flat-square)](https://github.com/{username}/{reponame})
+[![AI: Mostly Human](https://img.shields.io/badge/AI-Mostly%20Human-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
+[![AI: Lightly Assisted](https://img.shields.io/badge/AI-Lightly%20Assisted-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
 [![AI: Moderately Assisted](https://img.shields.io/badge/AI-Moderately%20Assisted-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
-[![AI: Highly Assisted](https://img.shields.io/badge/AI-Highly%20Assisted-1d4ed8?style=flat-square)](https://github.com/{username}/{reponame})
-[![AI: Vibe Coding](https://img.shields.io/badge/AI-Vibe%20Coding-1e3a8a?style=flat-square)](https://github.com/{username}/{reponame})
+[![AI: Highly Assisted](https://img.shields.io/badge/AI-Highly%20Assisted-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
+[![AI: Vibe Coding](https://img.shields.io/badge/AI-Vibe%20Coding-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
+[![Bitcoin BTC](https://img.shields.io/badge/buy_me_a_coffee-BTC-F7931A?style=flat-square&logo=bitcoin&logoColor=white)](https://github.com/SegoCode/SegoCode/discussions/2)
 
 
 This section should provide a concise introduction to the application, explaining its primary function and the problem it addresses. 
