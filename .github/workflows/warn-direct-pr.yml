@@ -19,7 +19,8 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
-            const isPromotion = pr.base.ref === 'main' && pr.head.ref === 'develop';
+            const isSameRepo = pr.head.repo?.full_name === pr.base.repo.full_name;
+            const isPromotion = isSameRepo && pr.base.ref === 'main' && pr.head.ref === 'develop';
             const isAutomated = pr.user.type === 'Bot';
             const hasAutoSync = pr.labels.some(({ name }) => name.toLowerCase() === 'auto-sync');
 
