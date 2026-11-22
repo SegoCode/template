@@ -18,7 +18,6 @@
 [![AI: Mostly Human](https://img.shields.io/badge/AI-Mostly%20Human-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
 [![AI: Lightly Assisted](https://img.shields.io/badge/AI-Lightly%20Assisted-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
 [![AI: Moderately Assisted](https://img.shields.io/badge/AI-Moderately%20Assisted-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
-[![AI: Highly Assisted](https://img.shields.io/badge/AI-Highly%20Assisted-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
 [![AI: Vibe Coding](https://img.shields.io/badge/AI-Vibe%20Coding-007ec6?style=flat-square)](https://github.com/{username}/{reponame})
 [![Bitcoin BTC](https://img.shields.io/badge/buy_me_a_coffee-BTC-F7931A?style=flat-square&logo=bitcoin&logoColor=white)](https://github.com/SegoCode/SegoCode/discussions/2)
 
