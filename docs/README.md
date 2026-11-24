@@ -21,14 +21,17 @@ To initialize the repository:
 
    - Go to the **Actions** tab in the GitHub repository.
    - Select the **Initialize repository** workflow.
-   - Click on **Run workflow** to manually trigger it.
+   - Choose the `workflow` mode (`gitflow` or `simple`) and click **Run workflow**:
+     - `gitflow`: keeps all workflows and creates `develop` if needed.
+     - `simple`: skips creating `develop` and removes `generate-tag.yml`, `warn-direct-pr.yml`, `sync-from-main-to-develop.yml`, and `sync-from-develop-to-main.yml`.
 
 4. **Review the generated changes**:
 
    - The workflow replaces all instances of `{reponame}` and `{username}` in all files with the actual repository name and username.
    - It removes the initializer workflow file (`initializer.yml`).
-   - It creates `develop` if needed.
-   - It commits these changes to `chore/initialize-repository` using a Conventional Commit and opens a PR to `main`.
+   - In `gitflow` mode, it creates `develop` if needed.
+   - In `simple` mode, it removes the gitflow workflows and keeps only `greetings.yml` and `gitleaks.yml`.
+   - It commits these changes to `chore/initialize-repository` using a Conventional Commit and opens a PR directly to `main`.
    - Running it again reuses the same branch and pull request.
    - Review the PR created by the initializer workflow.
    - Once satisfied, merge the PR into `main`.
