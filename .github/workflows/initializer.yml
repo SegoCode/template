@@ -2,6 +2,15 @@ name: Initialize repository
 
 on:
   workflow_dispatch:
+    inputs:
+      workflow:
+        description: Repository workflow mode
+        required: true
+        default: gitflow
+        type: choice
+        options:
+          - gitflow
+          - simple
 
 concurrency:
   group: initialize-repository
@@ -33,6 +42,7 @@ jobs:
           echo "reponame=${{ github.event.repository.name }}" >> "$GITHUB_OUTPUT"
 
       - name: Create develop branch if it doesn't exist
+        if: inputs.workflow == 'gitflow'
         run: |
           if ! git ls-remote --exit-code --heads origin develop; then
             git push origin HEAD:refs/heads/develop
@@ -50,11 +60,27 @@ jobs:
         run: |
           rm -f .github/workflows/initializer.yml
 
+      - name: Remove gitflow workflows in simple mode
+        if: inputs.workflow == 'simple'
+        run: |
+          rm -f \
+            .github/workflows/generate-tag.yml \
+            .github/workflows/warn-direct-pr.yml \
+            .github/workflows/sync-from-main-to-develop.yml \
+            .github/workflows/sync-from-develop-to-main.yml
+
       - name: Commit changes
         run: |
           git checkout -B chore/initialize-repository
           git add --all -- ':!.github/workflows'
           git add .github/workflows/initializer.yml
+          if [ "${{ inputs.workflow }}" = "simple" ]; then
+            git add \
+              .github/workflows/generate-tag.yml \
+              .github/workflows/warn-direct-pr.yml \
+              .github/workflows/sync-from-main-to-develop.yml \
+              .github/workflows/sync-from-develop-to-main.yml
+          fi
           git commit -m "chore: initialize repository"
           git fetch origin chore/initialize-repository:refs/remotes/origin/chore/initialize-repository 2>/dev/null || true
           git push --force-with-lease origin HEAD:chore/initialize-repository
@@ -66,9 +92,14 @@ jobs:
           PR_URL=$(gh pr list --repo "${{ github.repository }}" --base main --head chore/initialize-repository \
             --state open --json url --jq '.[0].url')
           if [ -z "$PR_URL" ]; then
+            if [ "${{ inputs.workflow }}" = "simple" ]; then
+              PR_BODY="Replace template placeholders, remove gitflow workflows for simple mode, and remove the one-time initializer."
+            else
+              PR_BODY="Replace template placeholders, create the develop branch, and remove the one-time initializer."
+            fi
             if ! PR_URL=$(gh pr create --repo "${{ github.repository }}" --base main --head chore/initialize-repository \
               --title "chore: initialize repository" \
-              --body "Replace template placeholders, create the develop branch, and remove the one-time initializer." 2>&1); then
+              --body "$PR_BODY" 2>&1); then
               if [[ "$PR_URL" != *"not permitted to create or approve pull requests"* ]]; then
                 echo "$PR_URL" >&2
                 exit 1
